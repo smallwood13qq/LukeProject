@@ -31,12 +31,13 @@ class Board
   def integrate(answer, query)
     green = align(answer, query)
     yellow = 0
-    answer.each do |i|
-      query.count(i)
-      if query.count(i) > 0
-        yellow = yellow + query.count(i)
-      end
+  counted_elements = Hash.new(0)
+  answer.each do |i|
+    if query.include?(i) && counted_elements[i] < [answer.count(i), query.count(i)].min
+      yellow += 1
+      counted_elements[i] += 1
     end
+  end
     [yellow, green]
   end
 
