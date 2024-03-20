@@ -26,7 +26,7 @@ class Board
   # integrating portion
   def integrate(answer, query)
     green = align(answer, query)
-    yellow = answer == query ? answer.length : (answer & query).length
+    yellow = (answer & query).length
     [yellow, green]
   end
 
