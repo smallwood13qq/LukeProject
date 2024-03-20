@@ -1,5 +1,7 @@
 class Board
   # initiation portion
+
+  # The following two functions generate a code based on whether duplication is allowed or not
   def init_NoDups(length)
     arr = (1..8).to_a
     arr.shuffle![0, length]
@@ -10,12 +12,13 @@ class Board
   end
 
   # color maitanence
+  #encodes the array of colors into integers
   def encode(arr)
     colors = { 'red' => 1, 'green' => 2, 'blue' => 3, 'yellow' => 4, 'brown' => 5, 'orange' => 6, 'black' => 7,
                'white' => 8 }
     arr.map { |i| colors[i.downcase] }
   end
-
+  # Decodes the array of colors into a string
   def decode(arr)
     colors = { 'red' => 1, 'green' => 2, 'blue' => 3, 'yellow' => 4, 'brown' => 5, 'orange' => 6, 'black' => 7,
                'white' => 8 }
@@ -24,14 +27,21 @@ class Board
   end
 
   # integrating portion
+  # aligns the secret code with the player's guess, returns the number of correct placements and the number of correct colors
   def integrate(answer, query)
     green = align(answer, query)
-    yellow = (answer & query).length
+    yellow = 0
+    answer.each do |i|
+      query.count(i)
+      if query.count(i) > 0
+        yellow = yellow + query.count(i)
+      end
+    end
     [yellow, green]
   end
 
   private
-
+  #aligns list element by element
   def align(arr1, arr2)
     num = 0
     (0...arr1.length).each do |i|
@@ -42,6 +52,7 @@ class Board
 end
 
 class Interface
+  #Gets preferred length from the player
   def get_code
     puts 'Code Length, Enter 4, 6 or 8'
     while true
@@ -52,7 +63,7 @@ class Interface
 
     end
   end
-
+  #gets boolean for whether duplications are allowed
   def get_dups
     puts 'Allow Duplicates, Enter Y or N'
     while true
@@ -63,7 +74,7 @@ class Interface
 
     end
   end
-
+  #Gets players guess in string form
   def get_guess(length)
     colors = %w[red green blue yellow brown orange black white]
 
@@ -85,13 +96,14 @@ class Interface
   def show_colors
     puts 'Colors = Red, Green, Blue, Yellow, Brown, Orange, Black, White'
   end
-
+  #displays the players guess results
   def display_results(results)
     puts("Correct Colors: #{results[0]}\nCorrect placements: #{results[1]}")
   end
 end
 
 class Game
+  #creates loop by which game is played
   def game
     while true
       play
@@ -102,7 +114,7 @@ class Game
     end
   end
 
-  
+  # plays the game 
   def play
     # variable initialization section
     initialize
@@ -114,6 +126,7 @@ class Game
            else
              @board.init_NoDups(length)
            end
+  #retrieve guess section
     puts "\nEnter your guess in the form of a code separated by spaces (for example: Red Green Blue Yellow)\n"
     for i in 0..7
       @interface.show_colors
@@ -123,6 +136,7 @@ class Game
       results = @board.integrate(code, guess)
 
       @interface.display_results(results)
+      #outcome section
       if results[1] == length
         puts 'Congradulations You Win'
         break
@@ -136,12 +150,12 @@ class Game
   end
 
   private
-
+  #initializes each class
   def initialize
     @board = Board.new
     @interface = Interface.new
   end
-
+  #asks the player if they want to play again
   def continue
     puts 'Play again?, Enter Y or N'
     while true
@@ -154,5 +168,6 @@ class Game
   end
 end
 
+#actually plays the game
 game = Game.new
-game.play
+game.game
